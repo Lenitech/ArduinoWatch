@@ -5,9 +5,13 @@
 #else
 #define log(x)
 #endif
+#define SCREEN_REFRESH_PERIOD 20
 // we use u8g to draw graphics on the screen
 // more about u8g library, please see https://github.com/olikraus/u8glib/wiki
 #include "U8glib.h"
+// for timer
+#include <elapsedMillis.h>
+elapsedMillis timeElapsed;
 // construct the u8g object for our OLED display
 // the display controller chip is SSD1306, it has been built into the screen.
 U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE);
@@ -25,8 +29,10 @@ void setup() {
 
 void loop() {
     static u8g_uint_t y = 64;
-    displayLoop(HOME_SCREEN, 0, y==0?y=64:--y);
-    delay(100);
+    if (timeElapsed > SCREEN_REFRESH_PERIOD) {
+        timeElapsed = 0;
+        displayLoop(HOME_SCREEN, 0, y==0?y=64:--y);
+    }
 }
 void initDisplay() {
     log(__func__);
